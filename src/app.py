@@ -15,6 +15,10 @@ import logging
 import sys
 import pandas as pd
 
+# For Windows, switch to the Proactor event loop which supports subprocess operations
+if sys.platform.startswith('win'):
+    asyncio.set_event_loop_policy(asyncio.WindowsProactorEventLoopPolicy())
+
 def get_csv_download_link(df):
     """Generate a link allowing the data in a given pandas dataframe to be downloaded"""
     csv = df.to_csv(index=True).encode('utf-8')
