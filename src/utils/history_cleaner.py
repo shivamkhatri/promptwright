@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 import logging
 from utils.logger_config import setup_logger
+import os
 
 # Get logger for this module
 logger = logging.getLogger(__name__)
@@ -28,6 +29,11 @@ class HistoryCleaner:
         # Ensure output directory exists (in case it's in a timestamp folder)
         output_dir = output_path.parent
         output_dir.mkdir(exist_ok=True)
+        
+        # Check directory permissions instead of using Path.owner()
+        if not os.access(output_dir, os.W_OK):
+            logger.error(f"Write permission denied for directory: {output_dir}")
+            raise PermissionError(f"Write permission denied for directory: {output_dir}")
         
         logger.info(f"Using absolute paths - Input: {input_path}, Output: {output_path}")
         
@@ -65,4 +71,4 @@ class HistoryCleaner:
             json.dump(history_data, f, indent=2)
             logger.info(f"Successfully wrote cleaned history to {output_path}")
             
-        return str(output_path) 
+        return str(output_path)
